@@ -34,6 +34,9 @@ who can carry light into the dark and bring treasure back.
 | [rules/core-rules.md](rules/core-rules.md) | Core rules: the roll, characters, combat, magic, advancement |
 | [rules/gm-guide.md](rules/gm-guide.md) | Running the game: foes, encounter building, a starter adventure |
 | [sheets/character-sheet.md](sheets/character-sheet.md) | Printable/fillable character sheet template |
+| [app/](app/) | Online companion app, live at https://morris-heap.github.io/game-table-top/ |
+| [data/](data/) | Game numbers as JSON, shared by the app and checked against the rules |
+| [docs/adr/](docs/adr/) | Architecture decision records |
 
 ## Roadmap
 
