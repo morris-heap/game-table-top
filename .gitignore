@@ -1,0 +1,23 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+
+# Local agent settings (keep shared config, ignore personal)
+.claude/settings.local.json
+.codex/local/
+
+# Build / export output
+dist/
+build/
+exports/
+*.pdf
+
+# Future app code
+node_modules/
+__pycache__/
+.venv/
+.env
