@@ -1,0 +1,29 @@
+{
+  "$comment": "Core resolution data. Source of truth: rules/core-rules.md §2 and §6.7. Change both together (see AGENTS.md).",
+  "version": "0.1",
+  "difficulties": [
+    { "name": "Easy", "dc": 8 },
+    { "name": "Standard", "dc": 12 },
+    { "name": "Hard", "dc": 16 },
+    { "name": "Heroic", "dc": 20 },
+    { "name": "Legendary", "dc": 24 }
+  ],
+  "degrees": {
+    "strongMargin": 5,
+    "costMissMax": 3
+  },
+  "boonDice": [4, 6, 8],
+  "attributes": ["Might", "Grace", "Wits", "Lore", "Spirit", "Presence"],
+  "momentum": {
+    "max": 6,
+    "costs": [
+      { "cost": 1, "effect": "Add a Boon to any Test (declare before rolling)" },
+      { "cost": 1, "effect": "+1 weapon die of damage on a hit" },
+      { "cost": 1, "effect": "Learn a foe's weakness or remaining Grit" },
+      { "cost": 2, "effect": "Take an extra Move" },
+      { "cost": 2, "effect": "Turn a Success-at-a-cost into a clean Success" },
+      { "cost": 3, "effect": "Take an extra Action" },
+      { "cost": 3, "effect": "Instantly recover 1d8 + level Grit" }
+    ]
+  }
+}

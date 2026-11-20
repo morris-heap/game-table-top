@@ -22,6 +22,7 @@ relevant ones before answering design questions or making edits:
 | [rules/core-rules.md](rules/core-rules.md) | Core mechanics: Tests, characters, callings, magic, combat, gear, advancement, open questions |
 | [rules/gm-guide.md](rules/gm-guide.md) | Foe stat blocks, encounter budgets, starter adventure |
 | [sheets/character-sheet.md](sheets/character-sheet.md) | Character sheet template (must match the rules) |
+| [data/](data/) | Machine-readable game numbers used by the app. Must match the rules files |
 
 ## How we establish rules (workflow)
 
@@ -55,13 +56,21 @@ relevant ones before answering design questions or making edits:
 - Mark placeholders clearly: *(to be written for v0.x)*.
 - Use relative links between docs.
 
-## Git
+## Git and Jira
 
 - Default branch `main`. Commit only when the user asks.
+- Work is tracked in Jira project **KAN** (Table Top Game). Name branches `KAN-<n>-short-slug`,
+  and mention the KAN key(s) in commit messages and PR titles.
 - Write commit messages in the imperative and say which rules changed (for example "Rebalance Hexer Grit to 8 + 3/level").
 
-## If code is added later
+## Companion app (`/app`)
 
-Put it under `/app` or `/tools` with its own README. Any game numbers in code must be read from
-or checked against the rules docs, never hard-coded in a way that silently drifts. Add build and test
-commands to this file when they exist.
+Vite + React + TypeScript static site, deployed to https://morris-heap.github.io/game-table-top/
+by `.github/workflows/app.yml` on pushes to `main`. See [docs/adr/0001-companion-app-stack.md](docs/adr/0001-companion-app-stack.md).
+
+- Commands (run in `app/`): `npm install`, `npm run dev`, `npm test`, `npm run lint`, `npm run build`.
+  **Run test, lint and build before you commit app changes.**
+- Game logic goes in `app/src/engine/` as pure functions with an injectable RNG, and every rule gets unit tests.
+- **Game numbers come from `/data/*.json`, never hard-coded.** When a rule's numbers change,
+  update `rules/*.md` **and** `/data` in the same change (this is part of the ripple check above).
+- Vite `base` is `/game-table-top/`. Use relative or base-aware paths for assets.
