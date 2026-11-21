@@ -1,4 +1,4 @@
-# Emberreach — Core Rules (v0.1)
+# Emberreach — Core Rules (v0.2)
 
 > First pass. All numbers are placeholders until playtesting.
 
@@ -74,7 +74,7 @@ Hero against an NPC (arm wrestling, a chase): the hero rolls against a DC of
 4. Pick a **Background**: gives 2 skill ranks and a starting contact (§3.4)
 5. Spend **2 more skill ranks** anywhere
 6. Choose **gear** from your Calling kit (§7)
-7. Work out your **Grit, Defense, Resolve**, and **Ember** (§3.5)
+7. Work out your **Grit, Dodge, Will**, and **Ember** (§3.5)
 8. Write one **Oath**, something your hero has sworn to do (§8.3)
 
 ### 3.1 Attributes
@@ -138,8 +138,8 @@ Athletics + Grace to tumble).
 |---|---|
 | **Grit** (stamina) | Calling base + Might + (level × Calling growth) |
 | **Wound slots** | 3 (+1 for Stoneborn) |
-| **Defense** (DC foes must beat if you attack them, and your dodge bonus) | 10 + Grace + armor |
-| **Resolve** (your mental defense) | 10 + Spirit |
+| **Dodge** (added to your dodge rolls, §6.5) | Grace + armor + shield |
+| **Will** (added to your rolls against mental attacks, §6.5) | Spirit |
 | **Speed** | 2 zones / 10 m per move |
 | **Ember** (magic and talent fuel) | Calling base + your casting attribute |
 
@@ -159,11 +159,11 @@ and a **talent list**. You pick **2 talents at level 1**, then 1 more each level
   and roll your own dodge with a Boon.
 - **Talents**
   - *Taunt* (1 Ember): one foe must target you on its next turn or take a Bane on every attack.
-  - *Shield Wall*: allies adjacent to you get +1 Defense.
+  - *Shield Wall*: allies adjacent to you get +1 Dodge.
   - *Unbreakable*: once per rest, when you'd take a Wound, take it as 5 Grit damage instead.
   - *Shove*: when you hit, also push the target one zone or knock it prone.
   - *Sentinel*: foes that leave your reach provoke a free attack.
-  - *Iron Oath*: +2 Resolve, immune to fear while your Oath is active.
+  - *Iron Oath*: +2 Will, immune to fear while your Oath is active.
 
 ### 4.2 Blade: the duelist
 
@@ -184,12 +184,12 @@ and a **talent list**. You pick **2 talents at level 1**, then 1 more each level
 
 *Bends the raw physics of the Forge.*
 
-- **Grit** 7 + 3/level · **Ember** 4 + Lore · **Armor** none · **Skills** Spellcraft 2, Arcana 1
+- **Grit** 8 + 3/level · **Ember** 4 + Lore · **Armor** none · **Skills** Spellcraft 2, Arcana 1
 - **Signature: Arcane Casting.** Casts Arcane spells with Lore. Starts with 3 spells and learns
   1 per level (§5).
 - **Talents**
   - *Overchannel*: add +1 spell die to a spell, but take a Bane on the cast.
-  - *Ember Shield* (Reaction, 1 Ember): +3 Defense against one attack.
+  - *Ember Shield* (Reaction, 1 Ember): +3 Dodge against one attack.
   - *Twinned*: single-target spells can hit two targets for +1 Ember.
   - *Quiet Casting*: cast without words or gestures.
   - *Ward-sense*: always sense magic within 10 m.
@@ -248,7 +248,8 @@ and a **talent list**. You pick **2 talents at level 1**, then 1 more each level
 
 - Casting a spell is your **Action**. Pay the spell's **Ember cost**.
 - Roll **d20 + casting attribute + Spellcraft** vs the spell's DC (a foe's **Defense**,
-  a foe's **Resolve**, or a set DC for utility spells).
+  a foe's **Resolve**, or a set DC for utility spells). If a foe's stat block lists no Resolve,
+  use its Defense.
 - **Success at a cost** on a spell: it works, but take **Strain** (1 Grit per Ember spent).
 - **Fumble:** **Backlash.** Roll on the Backlash table (§5.4).
 
@@ -269,7 +270,7 @@ and a **talent list**. You pick **2 talents at level 1**, then 1 more each level
 | Binding Glyph | 1 | 1 foe, Resolve | Target cannot move until it passes DC 12 at the end of its turn |
 | Blink | 1 | Self | Teleport 2 zones as a Reaction |
 | Veil | 1 | Self/ally, DC 12 | Invisible until you attack or the scene ends |
-| Forge Lance | 2 | Line, Defense | 3d8 fire damage, ignores armor |
+| Forge Lance | 3 | Line, Defense | 3d8 fire damage, ignores armor |
 | Mindspike | 1 | 1 foe, Resolve | 2d6 psychic damage, target takes a Bane on its next action |
 | Kindle | 0 | Utility | Light, small flames, warm or chill an object |
 
@@ -280,7 +281,7 @@ and a **talent list**. You pick **2 talents at level 1**, then 1 more each level
 | Mend Wounds | 1 | Ally in reach, auto | Heal 2d6 + Spirit Grit |
 | Radiant Lash | 0 | 1 foe, Defense | 1d8 radiant damage. Undead take a Bane next turn |
 | Bless | 1 | Allies in zone | Boon on their next Test |
-| Ward of Flame | 1 | Ally | +2 Defense until the end of the scene |
+| Ward of Flame | 1 | Ally | +2 Dodge until the end of the scene |
 | Rekindle | 3 | Downed ally, DC 14 | Revive at half Grit and remove 1 Wound |
 | Smite the Dark | 2 | 1 foe, Resolve | 3d6 radiant damage, doubled against undead |
 | Calm | 1 | 1 creature, Resolve | Ends fear or rage. Hostile NPCs stop to talk |
@@ -339,29 +340,37 @@ The battlefield is split into **zones** (rooms, a bridge, a balcony).
 - **Hit:** roll weapon damage + attribute.
 - **Strong success:** +1 Momentum.
 - **Natural 20 (Critical):** maximum damage on the weapon die, then roll it again and add it.
-- **Success at a cost** applies to attacks too: you hit, but you're exposed (provoke an attack),
-  your weapon is stuck, and so on.
+- **Success at a cost (Glancing hit):** deal **half damage** (round down). On-hit effects
+  (talents like *Shove* or *Pinning Shot*, *Opening*, poison) don't trigger. Spending 2 Momentum
+  turns it into a clean hit.
 
 ### 6.5 Dodging (heroes roll here too)
 
 When a foe attacks you, **you roll**:
 
-> **d20 + Grace + armor bonus** vs the foe's **Attack DC**
+> **d20 + Dodge** (Grace + armor + shield) vs the foe's **Attack DC**
 
 - **Success:** you avoid it (or block it).
 - **Success at a cost:** take **half damage**.
 - **Failure:** take full damage.
 - **Natural 1:** take full damage, and the foe gets its "on a critical" effect.
 
-Mental attacks (fear, charm) use **d20 + Spirit** vs the foe's **Will DC**.
+Mental attacks (fear, charm) use **d20 + Will** vs the foe's **Will DC**.
+
+- **One attack, one roll.** Each foe attack is one dodge roll by the hero it targets.
+  An area attack makes **every hero in the area** roll one dodge.
+- **Swarms:** Minions act in groups of 3–6 as a single **swarm** that makes **one attack per round**
+  (see the GM guide). You dodge a swarm once, not once per Minion.
 
 ### 6.6 Grit, Wounds, and going Down
 
 - Damage comes off **Grit** first.
 - When damage takes you **below 0 Grit**, set Grit to 0 and take **1 Wound**.
   At 0 Grit, **every hit that lands deals a Wound** instead of damage.
-- **Each Wound** gives you a **Bane** on one type of Test of your choice
-  (for example "a Bane on Might Tests"). Write it down.
+- **Each Wound** gives you a **Bane** on every Test with one Attribute. Roll **d6** to find out which:
+  **1** Might · **2** Grace · **3** Wits · **4** Lore · **5** Spirit · **6** Presence. Write it down.
+  A Grace Wound also hits your dodges, and a Spirit Wound hits your Will rolls.
+  Wounds on the same Attribute stack (Bane d4 → d6 → d8).
 - **Fill all your Wound slots:** you're **Down**. You can't act, and you're dying.
   - At the start of each Heroes' Phase, roll **d20 + Spirit**. **10+** means you hold on.
     Three failures means your hero dies. A Natural 20 means you get back up with 1 Grit.
@@ -384,7 +393,7 @@ Any hero can spend it:
 | 3 | Take an extra Action |
 | 3 | Instantly recover 1d8 + level Grit |
 
-Momentum **drops by 1 at the end of each scene**.
+Momentum **empties to 0 at the end of each scene**. Use it or lose it.
 
 ### 6.8 Dread (the GM's pool)
 
@@ -427,7 +436,7 @@ The GM spends it to:
 
 ### 7.2 Armor
 
-| Armor | Defense / dodge bonus | Drawback |
+| Armor | Dodge bonus | Drawback |
 |---|---|---|
 | None | +0 | |
 | Light (leather) | +1 | |
@@ -498,16 +507,5 @@ the NPC one step. A strong success shifts two. Failure may shift it the wrong wa
 
 ## Open questions
 
-These need playtesting or a decision:
-
-1. **Players roll all dice:** does it slow combat down when there are many foes? Possible fix:
-   minion swarms make one attack per swarm.
-2. **Wound Banes:** should players choose where the Bane goes, or should a hit-location table decide?
-3. **Momentum cap (6):** too high? It may need to empty fully between scenes rather than drop by 1.
-4. **Success at a cost on attacks:** might feel punishing on a "hit." Try it as optional at first.
-5. **Ember vs spell slots:** is one shared pool for talents and spells too loose? Watch for Hexers
-   spamming Forge Lance.
-6. **Level 1 lethality:** Grit for a Hexer (7 + 3 + Might) might be too fragile. Sample foes hit for ~5.
-7. **Defense formula:** should heroes' Defense (to be hit) and dodge bonus stay the same number?
-   They're the same now for simplicity.
-8. **Setting name:** "Emberreach" is a working title. Check for conflicts before anything public.
+None right now. The v0.1 questions were settled on 2026-11-21 (see [decisions](../docs/decisions.md)).
+Add new ones here as they come up.

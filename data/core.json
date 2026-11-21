@@ -1,6 +1,6 @@
 {
   "$comment": "Core resolution data. Source of truth: rules/core-rules.md §2 and §6.7. Change both together (see AGENTS.md).",
-  "version": "0.1",
+  "version": "0.2",
   "difficulties": [
     { "name": "Easy", "dc": 8 },
     { "name": "Standard", "dc": 12 },
@@ -16,6 +16,7 @@
   "attributes": ["Might", "Grace", "Wits", "Lore", "Spirit", "Presence"],
   "momentum": {
     "max": 6,
+    "resetsAtSceneEnd": true,
     "costs": [
       { "cost": 1, "effect": "Add a Boon to any Test (declare before rolling)" },
       { "cost": 1, "effect": "+1 weapon die of damage on a hit" },

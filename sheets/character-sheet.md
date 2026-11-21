@@ -16,11 +16,11 @@
 
 ## Vital numbers
 
-| Grit | Max Grit | Defense | Resolve | Speed | Ember | Max Ember |
+| Grit | Max Grit | Dodge | Will | Speed | Ember | Max Ember |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | ___ | ___ | ___ | ___ | ___ | ___ | ___ |
 
-**Wounds** (each gives a Bane, so write where it applies)
+**Wounds** (each gives a Bane on one Attribute: roll d6, 1 Might · 2 Grace · 3 Wits · 4 Lore · 5 Spirit · 6 Presence)
 
 1. [ ] ________________
 2. [ ] ________________
