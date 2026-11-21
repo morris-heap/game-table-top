@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Character Sheet Mockup</title>
+<!-- VTTER-47 UI mockup. Static, sample data only. Colors match app/src/index.css. -->
+<style>
+  :root {
+    --bg: #f7f3ee; --panel: #ffffff; --text: #2a2420; --muted: #6e625a; --border: #e4dbd2;
+    --ember: #d9531e; --ember-soft: #fbe6dc; --gold: #b8860b; --bad: #a3322a; --bad-soft: #f8e1df;
+    --radius: 14px;
+    font: 15px/1.45 system-ui, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text); background: var(--bg);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17120f; --panel: #221b17; --text: #f1e8e0; --muted: #b3a79d; --border: #3a2f28;
+      --ember: #ff7a3d; --ember-soft: #3d2216; --gold: #e0b44a; --bad: #ff8a80; --bad-soft: #3d1d1a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17120f; --panel: #221b17; --text: #f1e8e0; --muted: #b3a79d; --border: #3a2f28;
+    --ember: #ff7a3d; --ember-soft: #3d2216; --gold: #e0b44a; --bad: #ff8a80; --bad-soft: #3d1d1a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); }
+  main { max-width: 1040px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1, h2, h3 { margin: 0; line-height: 1.2; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 10px; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .topbar a { color: var(--ember); text-decoration: none; font-weight: 600; }
+  .saved { font-size: 13px; color: var(--muted); }
+  .saved::before { content: "●"; color: #2f7d4f; margin-right: 6px; }
+  .btn { border: 1px solid var(--border); background: var(--panel); color: var(--text); border-radius: 10px; padding: 6px 12px; font: inherit; font-size: 14px; }
+
+  /* Header: properties left, portrait right */
+  .hero { display: grid; grid-template-columns: 1fr 220px; gap: 16px; align-items: start; }
+  .identity { display: grid; gap: 14px; }
+  .name-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .name-row h1 { font-size: 30px; }
+  .level { background: var(--ember); color: #fff; border-radius: 999px; padding: 2px 12px; font-weight: 700; font-size: 14px; }
+  .fields { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .field { border-bottom: 1px solid var(--border); padding-bottom: 4px; min-width: 0; }
+  .field label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  .field span { font-weight: 600; }
+  .oath { font-style: italic; }
+
+  .portrait { aspect-ratio: 3 / 4; border-radius: var(--radius); padding: 6px;
+    background: linear-gradient(145deg, var(--gold), var(--ember)); }
+  .portrait-inner { width: 100%; height: 100%; border-radius: 10px; background: var(--ember-soft);
+    border: 2px dashed color-mix(in srgb, var(--ember) 50%, transparent);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    color: var(--muted); text-align: center; font-size: 13px; padding: 12px; }
+  .portrait-inner svg { width: 56px; height: 56px; color: var(--ember); }
+
+  /* Attributes and vitals */
+  .attrs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+  .attr { text-align: center; border: 1px solid var(--border); border-radius: 12px; padding: 8px 4px; }
+  .attr b { display: block; font-size: 24px; }
+  .attr small { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  .attr.bane { border-color: var(--bad); background: var(--bad-soft); }
+
+  .vitals { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+  .vital { border-radius: 12px; background: var(--bg); padding: 8px 10px; }
+  .vital small { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  .vital b { font-size: 20px; }
+  .vital .max { color: var(--muted); font-weight: 400; }
+  .derived { font-size: 11px; color: var(--muted); }
+  .bar { height: 6px; border-radius: 3px; background: var(--border); margin-top: 6px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--ember); }
+
+  .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .stack { display: grid; gap: 16px; align-content: start; }
+
+  .wounds { display: grid; gap: 6px; }
+  .wound { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px dashed var(--border); border-radius: 10px; font-size: 14px; color: var(--muted); }
+  .wound.on { border-style: solid; border-color: var(--bad); background: var(--bad-soft); color: var(--text); }
+  .death { display: flex; gap: 6px; align-items: center; margin-top: 10px; font-size: 14px; }
+  .pip { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--bad); display: inline-block; }
+
+  .skills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px 16px; }
+  .skill { display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding: 3px 0; border-bottom: 1px solid var(--border); }
+  .skill.weapon { font-weight: 700; }
+  .dots { letter-spacing: 2px; color: var(--ember); font-size: 12px; }
+  .dots .off { color: var(--border); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; padding: 4px 6px; }
+  td { padding: 6px; border-top: 1px solid var(--border); }
+  td.c, th.c { text-align: center; }
+  ul.list { margin: 0; padding-left: 18px; font-size: 14px; }
+  ul.list li { margin: 4px 0; }
+  .tag { font-size: 11px; background: var(--ember-soft); color: var(--ember); border-radius: 6px; padding: 1px 6px; margin-left: 4px; }
+  .gear-row { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14px; margin-bottom: 8px; }
+  .muted { color: var(--muted); font-size: 14px; }
+  .note { margin-top: 20px; font-size: 12px; color: var(--muted); text-align: center; }
+
+  @media (max-width: 760px) {
+    .hero { grid-template-columns: 1fr 120px; }
+    .fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .attrs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .vitals { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .layout { grid-template-columns: 1fr; }
+    .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .name-row h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar">
+    <a href="#">← My Heroes</a>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="saved">Saved</span>
+      <button class="btn">Export JSON</button>
+      <button class="btn">Duplicate</button>
+    </div>
+  </div>
+
+  <!-- Header: character properties (left) + portrait frame (top right) -->
+  <section class="panel hero" aria-label="Hero">
+    <div class="identity">
+      <div class="name-row">
+        <h1>Kestrel Ashvane</h1>
+        <span class="level">Level 1</span>
+      </div>
+
+      <div class="fields">
+        <div class="field"><label>Player</label><span>Player 1</span></div>
+        <div class="field"><label>Ancestry</label><span>Emberkin</span></div>
+        <div class="field"><label>Calling</label><span>Hexer</span></div>
+        <div class="field"><label>Background</label><span>Hedge scholar</span></div>
+      </div>
+      <div class="field"><label>Oath</label><span class="oath">"I will learn what fell from the sky above Cindermere."</span></div>
+
+      <div>
+        <h2>Attributes</h2>
+        <div class="attrs">
+          <div class="attr"><b>−1</b><small>Might</small></div>
+          <div class="attr bane" title="Wound Bane d4"><b>+1</b><small>Grace · Bane</small></div>
+          <div class="attr"><b>+2</b><small>Wits</small></div>
+          <div class="attr"><b>+3</b><small>Lore</small></div>
+          <div class="attr"><b>+2</b><small>Spirit</small></div>
+          <div class="attr"><b>0</b><small>Presence</small></div>
+        </div>
+      </div>
+
+      <div>
+        <h2>Vital numbers</h2>
+        <div class="vitals">
+          <div class="vital"><small>Grit</small><b>6 <span class="max">/ 10</span></b><div class="bar"><i style="width:60%"></i></div></div>
+          <div class="vital"><small>Ember</small><b>4 <span class="max">/ 7</span></b><div class="bar"><i style="width:57%"></i></div></div>
+          <div class="vital"><small>Dodge</small><b>+1</b><div class="derived">Grace + armor + shield</div></div>
+          <div class="vital"><small>Will</small><b>+2</b><div class="derived">Spirit</div></div>
+          <div class="vital"><small>Speed</small><b>2</b><div class="derived">zones / move</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="portrait" aria-label="Character portrait">
+      <div class="portrait-inner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
+        </svg>
+        <span>Add portrait</span>
+        <button class="btn">Upload</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="layout">
+    <div class="stack">
+      <section class="panel" aria-label="Wounds">
+        <h2>Wounds <span class="muted" style="text-transform:none;letter-spacing:0">· 1 of 3 slots</span></h2>
+        <div class="wounds">
+          <div class="wound on">✕ <b>Grace</b> · Bane d4 (rolled 2)</div>
+          <div class="wound">○ Empty, <u>roll d6</u> when you take a Wound</div>
+          <div class="wound">○ Empty</div>
+        </div>
+        <div class="death">Death rolls: <span class="pip"></span><span class="pip"></span><span class="pip"></span></div>
+      </section>
+
+      <section class="panel" aria-label="Skills">
+        <h2>Skills (rank 0–3)</h2>
+        <div class="skills">
+          <div class="skill">Athletics <span class="dots"><span class="off">●●●</span></span></div>
+          <div class="skill">Arcana <span class="dots">●●<span class="off">●</span></span></div>
+          <div class="skill">Insight <span class="dots">●<span class="off">●●</span></span></div>
+          <div class="skill">Stealth <span class="dots"><span class="off">●●●</span></span></div>
+          <div class="skill">History <span class="dots">●<span class="off">●●</span></span></div>
+          <div class="skill">Persuade <span class="dots"><span class="off">●●●</span></span></div>
+          <div class="skill">Sleight <span class="dots"><span class="off">●●●</span></span></div>
+          <div class="skill">Nature <span class="dots"><span class="off">●●●</span></span></div>
+          <div class="skill">Deceive <span class="dots"><span class="off">●●●</span></span></div>
+          <div class="skill">Survival <span class="dots"><span class="off">●●●</span></span></div>
+          <div class="skill">Medicine <span class="dots"><span class="off">●●●</span></span></div>
+          <div class="skill">Intimidate <span class="dots"><span class="off">●●●</span></span></div>
+          <div class="skill">Notice <span class="dots">●<span class="off">●●</span></span></div>
+          <div class="skill">Craft <span class="dots"><span class="off">●●●</span></span></div>
+          <div class="skill">Perform <span class="dots"><span class="off">●●●</span></span></div>
+          <div class="skill weapon">Melee <span class="dots"><span class="off">●●●</span></span></div>
+          <div class="skill weapon">Ranged <span class="dots"><span class="off">●●●</span></span></div>
+          <div class="skill weapon">Spellcraft <span class="dots">●●<span class="off">●</span></span></div>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="Gear">
+        <h2>Gear</h2>
+        <div class="gear-row">
+          <span><b>Armor:</b> None</span>
+          <span><b>Shield:</b> No</span>
+          <span><b>Silver:</b> 20</span>
+          <span><b>Supply:</b> d8</span>
+        </div>
+        <p class="muted" style="margin:0">Focus (orb), dagger, spellbook, ink, backpack, bedroll, rope, torches</p>
+      </section>
+    </div>
+
+    <div class="stack">
+      <section class="panel" aria-label="Attacks">
+        <h2>Attacks</h2>
+        <table>
+          <thead><tr><th>Weapon / Spell</th><th class="c">Test</th><th class="c">Damage</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Ember Bolt</td><td class="c">+5</td><td class="c">1d10</td><td>Fire, far, 0 Ember</td></tr>
+            <tr><td>Dagger</td><td class="c">+1</td><td class="c">d6 + 1</td><td>Throwable (near)</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="panel" aria-label="Signature and talents">
+        <h2>Signature feature &amp; talents</h2>
+        <ul class="list">
+          <li><b>Signature: Arcane Casting.</b> Cast Arcane spells with Lore.</li>
+          <li><b>Ember Shield</b><span class="tag">Reaction · 1 Ember</span> +3 Dodge against one attack.</li>
+          <li><b>Familiar.</b> A small ember-spirit scouts, carries, and delivers touch spells.</li>
+        </ul>
+      </section>
+
+      <section class="panel" aria-label="Spells">
+        <h2>Spells</h2>
+        <table>
+          <thead><tr><th>Spell</th><th class="c">Ember</th><th>DC / Target</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Ember Bolt</td><td class="c">0</td><td>1 foe, Defense</td><td>1d10 fire, far</td></tr>
+            <tr><td>Shatter</td><td class="c">1</td><td>1 zone, Defense</td><td>2d6 thunder to all</td></tr>
+            <tr><td>Mindspike</td><td class="c">1</td><td>1 foe, Resolve</td><td>2d6 psychic, Bane next action</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="panel" aria-label="Contacts and notes">
+        <h2>Contacts &amp; notes</h2>
+        <ul class="list">
+          <li>A rival academic (Hedge scholar)</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <p class="note">VTTER-47 mockup · sample data · derived numbers per rules v0.2</p>
+</main>
+</body>
+</html>
