@@ -8,7 +8,8 @@ Codex reads `AGENTS.md` directly. Claude Code reads `CLAUDE.md`, which imports t
 
 **Emberreach** (working title) is an original fantasy tabletop RPG in the classic dungeon-crawl
 structure: a GM, 3–5 players, d20 Tests, ancestries, callings (classes), and levels 1–10.
-The repo is mostly Markdown game design for now. Code (a dice roller, character builder, and so on) may come later.
+The repo holds the game design (Markdown), a companion web app (`/app`, GitHub Pages) and its API
+(`/api`, a Cloudflare Worker on Optilogic Postgres). The rules files stay the source of truth for the code.
 
 ## Read before changing anything
 
@@ -22,7 +23,9 @@ relevant ones before answering design questions or making edits:
 | [rules/core-rules.md](rules/core-rules.md) | Core mechanics: Tests, characters, callings, magic, combat, gear, advancement, open questions |
 | [rules/gm-guide.md](rules/gm-guide.md) | Foe stat blocks, encounter budgets, starter adventure |
 | [sheets/character-sheet.md](sheets/character-sheet.md) | Character sheet template (must match the rules) |
-| [data/](data/) | Machine-readable game numbers used by the app. Must match the rules files |
+| [data/](data/) | Machine-readable game numbers used by the app and API (`core.json`, `character.json`). Must match the rules files |
+| [docs/adr/](docs/adr/) | Architecture decisions: [0001](docs/adr/0001-companion-app-stack.md) app stack, [0002](docs/adr/0002-backend-postgres.md) backend |
+| [docs/mockups/](docs/mockups/) | Character sheet UI mockups (view and guided-creation edit mode) for VTTER-47 |
 
 ## How we establish rules (workflow)
 
@@ -58,9 +61,13 @@ relevant ones before answering design questions or making edits:
 
 ## Git and Jira
 
-- Default branch `main`. Commit only when the user asks.
-- Work is tracked in Jira project **KAN** (Table Top Game). Name branches `KAN-<n>-short-slug`,
-  and mention the KAN key(s) in commit messages and PR titles.
+- Default branch `main`. Commit only when the user asks. Branch from an up-to-date `main` and open a PR;
+  merging to `main` deploys (the app to Pages, the API to Cloudflare).
+- Work is tracked in Jira project **VTTER** (Virtual Table Top Ember Reach) at morris-heap.atlassian.net.
+  Name branches `VTTER-<n>-short-slug`, and mention the VTTER key(s) in commit messages and PR titles.
+  (Older history uses the previous project key, KAN.)
+- Current epics: VTTER-46 UI / UX (VTTER-47 Character Sheet UI), VTTER-51 Backend
+  (VTTER-53 login, VTTER-55 portraits, VTTER-56 app ↔ API still to do).
 - Write commit messages in the imperative and say which rules changed (for example "Rebalance Hexer Grit to 8 + 3/level").
 
 ## Companion app (`/app`)
@@ -90,3 +97,9 @@ Optilogic Postgres (schema `emberreach`). Deployed by `.github/workflows/api.yml
   and child tables, not JSON. Allowed values come from `/data/character.json` and `/data/core.json`.
 - The Optilogic test environment can restart and drop its firewall rules. The scripts and the Worker
   (on failure, plus a 10-minute cron) re-add them automatically with the app key.
+- Hyperdrive query caching is **off** on purpose (a read right after a save or delete must be fresh). Keep it off.
+- Until real login (VTTER-53), heroes are scoped by an `X-Owner-Id` UUID header. That isn't authentication,
+  so keep only test data in the database and clean up any rows you create when testing.
+- On Windows, run Vitest from a path that starts with an uppercase drive letter (`C:\…`). A lowercase `c:\…`
+  working directory makes every test file that imports a local module fail with
+  "Cannot read properties of undefined (reading 'config')". CI (Linux) isn't affected.

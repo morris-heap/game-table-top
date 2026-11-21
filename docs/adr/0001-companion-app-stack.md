@@ -1,6 +1,7 @@
 # ADR 0001: Companion app stack and rules-data format
 
-- **Status:** Accepted (2026-11-19)
+- **Status:** Accepted (2026-11-19). The "no backend" part is amended by
+  [ADR 0002](0002-backend-postgres.md) (Cloudflare Worker + Optilogic Postgres).
 - **Jira:** KAN-32
 
 ## Context
