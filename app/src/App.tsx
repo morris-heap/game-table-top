@@ -119,7 +119,7 @@ export default function App() {
         </section>
       )}
 
-      <footer>First iteration of the Emberreach companion · <a href="https://github.com/morris-heap/game-table-top">GitHub</a></footer>
+      <footer>First iteration of the Emberreach companion · <a href="https://github.com/morris-heap/virtual-table-top-ember-reach">GitHub</a></footer>
     </main>
   )
 }
