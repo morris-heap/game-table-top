@@ -1,0 +1,23 @@
+{
+  "$comment": "Character sheet structure. Source of truth: rules/core-rules.md §3 (making a hero), §6.6 (Wounds, death rolls), §7.2 (armor), §8.1 (Supply), §9 (advancement), and sheets/character-sheet.md. Change both together (see AGENTS.md).",
+  "version": "0.2",
+  "levels": { "min": 1, "max": 10 },
+  "attributeRange": { "min": -1, "max": 5 },
+  "skills": [
+    "Athletics", "Stealth", "Sleight", "Survival", "Notice",
+    "Arcana", "History", "Nature", "Medicine", "Craft",
+    "Insight", "Persuade", "Deceive", "Intimidate", "Perform"
+  ],
+  "weaponSkills": ["Melee", "Ranged", "Spellcraft"],
+  "skillRank": { "min": 0, "max": 3, "maxAtLevel7": 4 },
+  "woundSlots": { "base": 3, "max": 4 },
+  "deathRollFailures": 3,
+  "armor": [
+    { "id": "none", "name": "None", "dodge": 0 },
+    { "id": "light", "name": "Light (leather)", "dodge": 1 },
+    { "id": "medium", "name": "Medium (chain, scale)", "dodge": 2 },
+    { "id": "heavy", "name": "Heavy (plate)", "dodge": 3 }
+  ],
+  "shieldDodge": 1,
+  "supplyDice": ["d8", "d6", "d4", "out"]
+}

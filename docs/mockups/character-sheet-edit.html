@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Character Sheet Edit</title>
+<!-- VTTER-47 edit-mode mockup. Static, sample data only. Colors match app/src/index.css.
+     Every field has a circled "?" help button. Help text is tailored once Ancestry and Calling are picked,
+     and links to the matching rules section (the rules docs are the help docs). -->
+<style>
+  :root {
+    --bg: #f7f3ee; --panel: #ffffff; --text: #2a2420; --muted: #6e625a; --border: #e4dbd2;
+    --ember: #d9531e; --ember-soft: #fbe6dc; --gold: #b8860b; --good: #2f7d4f; --good-soft: #e1f2e7;
+    --input: #fffdfb; --radius: 14px;
+    font: 15px/1.45 system-ui, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text); background: var(--bg);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17120f; --panel: #221b17; --text: #f1e8e0; --muted: #b3a79d; --border: #3a2f28;
+      --ember: #ff7a3d; --ember-soft: #3d2216; --gold: #e0b44a; --good: #6fd39a; --good-soft: #1b3326; --input: #1b1512;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17120f; --panel: #221b17; --text: #f1e8e0; --muted: #b3a79d; --border: #3a2f28;
+    --ember: #ff7a3d; --ember-soft: #3d2216; --gold: #e0b44a; --good: #6fd39a; --good-soft: #1b3326; --input: #1b1512;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); }
+  main { max-width: 1040px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1, h2 { margin: 0; line-height: 1.2; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .topbar a { color: var(--ember); text-decoration: none; font-weight: 600; }
+  .btn { border: 1px solid var(--border); background: var(--panel); color: var(--text); border-radius: 10px; padding: 6px 12px; font: inherit; font-size: 14px; }
+  .btn.primary { background: var(--ember); border-color: var(--ember); color: #fff; font-weight: 600; }
+  .mode { display: inline-flex; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .mode span { padding: 6px 12px; font-size: 14px; }
+  .mode .on { background: var(--ember-soft); color: var(--ember); font-weight: 700; }
+
+  /* Creation guide (rules §3 steps 1-8) */
+  .steps { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; margin-bottom: 16px; }
+  .step { border: 1px solid var(--border); border-radius: 10px; padding: 6px 8px; font-size: 12px; background: var(--panel); color: var(--muted); }
+  .step b { display: block; font-size: 11px; }
+  .step.done { border-color: var(--good); background: var(--good-soft); color: var(--text); }
+  .step.done b::after { content: " ✓"; color: var(--good); }
+  .step.now { border-color: var(--ember); background: var(--ember-soft); color: var(--text); box-shadow: 0 0 0 2px var(--ember-soft); }
+
+  /* Circled help button */
+  .q { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%;
+    border: 1.5px solid var(--ember); color: var(--ember); font-size: 11px; font-weight: 800; line-height: 1;
+    background: transparent; padding: 0; cursor: pointer; flex: none; text-transform: none; letter-spacing: 0; }
+  .q.open { background: var(--ember); color: #fff; }
+
+  .hero { display: grid; grid-template-columns: 1fr 200px; gap: 16px; align-items: start; }
+  .identity { display: grid; gap: 14px; }
+  .fields { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .f { position: relative; min-width: 0; }
+  .f label { display: flex; align-items: center; gap: 5px; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 3px; }
+  .in { width: 100%; border: 1px solid var(--border); background: var(--input); color: var(--text); border-radius: 8px; padding: 6px 8px; font: inherit; font-size: 14px; }
+  .sel::after { content: "▾"; float: right; color: var(--muted); }
+  .wide { grid-column: span 4; }
+  .name-row { display: grid; grid-template-columns: 1fr 120px; gap: 10px; }
+
+  .portrait { aspect-ratio: 3 / 4; border-radius: var(--radius); padding: 6px; background: linear-gradient(145deg, var(--gold), var(--ember)); }
+  .portrait-inner { width: 100%; height: 100%; border-radius: 10px; background: var(--ember-soft);
+    border: 2px dashed color-mix(in srgb, var(--ember) 50%, transparent);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--muted); font-size: 13px; }
+  .portrait-inner svg { width: 48px; height: 48px; color: var(--ember); }
+
+  .attrs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+  .attr { text-align: center; border: 1px solid var(--border); border-radius: 12px; padding: 6px 4px; background: var(--input); }
+  .attr b { display: block; font-size: 22px; }
+  .attr small { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); display: inline-flex; align-items: center; gap: 4px; }
+  .attr .bonus { display: block; font-size: 11px; color: var(--ember); font-weight: 600; }
+  .array { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 8px; }
+  .chip { border: 1px solid var(--border); border-radius: 999px; padding: 1px 9px; font-weight: 700; color: var(--text); }
+  .chip.used { text-decoration: line-through; color: var(--muted); }
+
+  .vitals { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+  .vital { border-radius: 12px; background: var(--bg); padding: 8px 10px; position: relative; }
+  .vital small { display: flex; align-items: center; gap: 5px; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  .vital b { font-size: 20px; }
+  .auto { font-size: 10px; color: var(--muted); }
+
+  /* Help popover */
+  .pop { position: absolute; z-index: 5; width: 330px; background: var(--panel); border: 1.5px solid var(--ember);
+    border-radius: 12px; padding: 12px 14px; box-shadow: 0 10px 30px rgba(0,0,0,.25); font-size: 13px; text-transform: none; letter-spacing: 0; color: var(--text); }
+  .pop h3 { margin: 0 0 6px; font-size: 14px; display: flex; justify-content: space-between; }
+  .pop h3 span { color: var(--muted); font-weight: 400; cursor: pointer; }
+  .pop p { margin: 0 0 8px; }
+  .pop .for { display: inline-block; font-size: 11px; background: var(--ember-soft); color: var(--ember); border-radius: 6px; padding: 1px 6px; margin-bottom: 6px; font-weight: 600; }
+  .pop .math { font-family: ui-monospace, Consolas, monospace; background: var(--bg); border-radius: 8px; padding: 6px 8px; font-size: 12px; }
+  .pop a { color: var(--ember); font-weight: 600; text-decoration: none; font-size: 12px; }
+  .pop::before { content: ""; position: absolute; top: -8px; left: 22px; width: 14px; height: 14px; background: var(--panel);
+    border-left: 1.5px solid var(--ember); border-top: 1.5px solid var(--ember); transform: rotate(45deg); }
+  .pop-attr { top: 36px; left: 0; }
+  .pop-grit { top: 62px; left: -4px; }
+
+  .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .stack { display: grid; gap: 16px; align-content: start; }
+  .skills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px 16px; }
+  .skill { display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding: 3px 0; border-bottom: 1px solid var(--border); }
+  .skill.weapon { font-weight: 700; }
+  .stepper { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; }
+  .stepper i { font-style: normal; width: 18px; height: 18px; border: 1px solid var(--border); border-radius: 5px; display: inline-flex; align-items: center; justify-content: center; color: var(--muted); font-size: 12px; }
+  .stepper b { width: 14px; text-align: center; }
+  .src { font-size: 10px; color: var(--ember); margin-left: 2px; }
+  .budget { font-size: 13px; color: var(--muted); margin: 0 0 8px; }
+  .budget b { color: var(--good); }
+  .pick { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; margin-bottom: 6px; }
+  .pick input { accent-color: var(--ember); }
+  .pick .cost { margin-left: auto; font-size: 11px; color: var(--muted); }
+  .note { margin-top: 20px; font-size: 12px; color: var(--muted); text-align: center; }
+
+  @media (max-width: 760px) {
+    .steps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .hero { grid-template-columns: 1fr 110px; }
+    .fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .wide { grid-column: span 2; }
+    .attrs, .vitals { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .layout { grid-template-columns: 1fr; }
+    .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pop { width: min(330px, calc(100vw - 48px)); }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar">
+    <a href="#">← My Heroes</a>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="mode"><span>View</span><span class="on">Edit</span></div>
+      <button class="btn primary">Done</button>
+    </div>
+  </div>
+
+  <!-- Creation guide: rules §3 "Making a hero", steps 1-8 -->
+  <nav class="steps" aria-label="Character creation steps">
+    <div class="step done"><b>1 Ancestry</b>Emberkin</div>
+    <div class="step done"><b>2 Calling</b>Hexer</div>
+    <div class="step now"><b>3 Attributes</b>5 of 6 set</div>
+    <div class="step done"><b>4 Background</b>Hedge scholar</div>
+    <div class="step done"><b>5 Skills</b>2 of 2 ranks</div>
+    <div class="step"><b>6 Gear</b>Hexer kit</div>
+    <div class="step"><b>7 Numbers</b>auto</div>
+    <div class="step"><b>8 Oath</b>not yet</div>
+  </nav>
+
+  <section class="panel hero" aria-label="Hero">
+    <div class="identity">
+      <div class="name-row">
+        <div class="f"><label>Name <button class="q" aria-label="Help: Name">?</button></label><div class="in">Kestrel Ashvane</div></div>
+        <div class="f"><label>Level <button class="q" aria-label="Help: Level">?</button></label><div class="in sel">1</div></div>
+      </div>
+
+      <div class="fields">
+        <div class="f"><label>Player <button class="q" aria-label="Help: Player">?</button></label><div class="in">Player 1</div></div>
+        <div class="f"><label>Ancestry <button class="q" aria-label="Help: Ancestry">?</button></label><div class="in sel">Emberkin</div></div>
+        <div class="f"><label>Calling <button class="q" aria-label="Help: Calling">?</button></label><div class="in sel">Hexer</div></div>
+        <div class="f"><label>Background <button class="q" aria-label="Help: Background">?</button></label><div class="in sel">Hedge scholar</div></div>
+        <div class="f wide"><label>Oath <button class="q" aria-label="Help: Oath">?</button></label><div class="in" style="color:var(--muted)">Something your hero has sworn to do…</div></div>
+      </div>
+
+      <div class="f">
+        <h2>Attributes <button class="q open" aria-label="Help: Attributes" aria-expanded="true">?</button></h2>
+        <div class="attrs">
+          <div class="attr"><b>−1</b><small>Might <button class="q">?</button></small></div>
+          <div class="attr"><b>+1</b><small>Grace <button class="q">?</button></small></div>
+          <div class="attr"><b>+2</b><small>Wits <button class="q">?</button></small></div>
+          <div class="attr"><b>+3</b><small>Lore <button class="q">?</button></small></div>
+          <div class="attr"><b>+2</b><small>Spirit <button class="q">?</button></small><span class="bonus">+1 Emberkin</span></div>
+          <div class="attr"><b style="color:var(--muted)">—</b><small>Presence <button class="q">?</button></small></div>
+        </div>
+        <div class="array">Array left: <span class="chip used">+3</span><span class="chip used">+2</span><span class="chip used">+1</span><span class="chip used">+1</span><span class="chip">0</span><span class="chip used">−1</span></div>
+
+        <div class="pop pop-attr" role="dialog" aria-label="Attributes help">
+          <h3>Attributes <span>✕</span></h3>
+          <div class="for">For your Emberkin Hexer</div>
+          <p>Assign <b>+3, +2, +1, +1, 0, −1</b> however you like, then add your Ancestry bonus. Max +4 at level 1.</p>
+          <p><b>Emberkin:</b> +1 Spirit (added for you).<br><b>Hexer</b> casts with <b>Lore</b>, so put your +3 there. Lore also sets your Ember.</p>
+          <p style="margin:0 0 6px">You have <b>0</b> left to place: give it to Presence.</p>
+          <a href="#">Read more: Core rules §3.1 Attributes →</a>
+        </div>
+      </div>
+
+      <div>
+        <h2>Vital numbers <span class="auto" style="text-transform:none;letter-spacing:0">· worked out for you</span></h2>
+        <div class="vitals">
+          <div class="vital"><small>Max Grit <button class="q">?</button></small><b>10</b><div class="auto">8 + Might + 3/level</div></div>
+          <div class="vital"><small>Max Ember <button class="q">?</button></small><b>7</b><div class="auto">4 + Lore</div></div>
+          <div class="vital"><small>Dodge <button class="q">?</button></small><b>+1</b><div class="auto">Grace + armor + shield</div></div>
+          <div class="vital"><small>Will <button class="q">?</button></small><b>+2</b><div class="auto">Spirit</div></div>
+          <div class="vital"><small>Speed <button class="q">?</button></small><b>2</b><div class="auto">zones / move</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="portrait" aria-label="Character portrait">
+      <div class="portrait-inner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        <span>Add portrait</span>
+        <button class="btn">Upload</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="layout">
+    <div class="stack">
+      <section class="panel" aria-label="Skills">
+        <h2>Skills <button class="q" aria-label="Help: Skills">?</button></h2>
+        <p class="budget">Hexer gives Spellcraft 2, Arcana 1 · Hedge scholar gives Arcana, History · Free ranks: <b>2 of 2 spent</b> · Max rank 3</p>
+        <div class="skills">
+          <div class="skill">Athletics <span class="stepper"><i>−</i><b>0</b><i>+</i></span></div>
+          <div class="skill">Arcana <span class="stepper"><i>−</i><b>2</b><i>+</i><span class="src">C·B</span></span></div>
+          <div class="skill">Insight <span class="stepper"><i>−</i><b>1</b><i>+</i></span></div>
+          <div class="skill">Stealth <span class="stepper"><i>−</i><b>0</b><i>+</i></span></div>
+          <div class="skill">History <span class="stepper"><i>−</i><b>1</b><i>+</i><span class="src">B</span></span></div>
+          <div class="skill">Persuade <span class="stepper"><i>−</i><b>0</b><i>+</i></span></div>
+          <div class="skill">Sleight <span class="stepper"><i>−</i><b>0</b><i>+</i></span></div>
+          <div class="skill">Nature <span class="stepper"><i>−</i><b>0</b><i>+</i></span></div>
+          <div class="skill">Deceive <span class="stepper"><i>−</i><b>0</b><i>+</i></span></div>
+          <div class="skill">Survival <span class="stepper"><i>−</i><b>0</b><i>+</i></span></div>
+          <div class="skill">Medicine <span class="stepper"><i>−</i><b>0</b><i>+</i></span></div>
+          <div class="skill">Intimidate <span class="stepper"><i>−</i><b>0</b><i>+</i></span></div>
+          <div class="skill">Notice <span class="stepper"><i>−</i><b>1</b><i>+</i></span></div>
+          <div class="skill">Craft <span class="stepper"><i>−</i><b>0</b><i>+</i></span></div>
+          <div class="skill">Perform <span class="stepper"><i>−</i><b>0</b><i>+</i></span></div>
+          <div class="skill weapon">Melee <span class="stepper"><i>−</i><b>0</b><i>+</i></span></div>
+          <div class="skill weapon">Ranged <span class="stepper"><i>−</i><b>0</b><i>+</i></span></div>
+          <div class="skill weapon">Spellcraft <span class="stepper"><i>−</i><b>2</b><i>+</i><span class="src">C</span></span></div>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="Gear">
+        <h2>Gear <button class="q" aria-label="Help: Gear">?</button></h2>
+        <p class="budget">Hexer kit: focus, dagger, spellbook, ink. No armor. Plus backpack, bedroll, rope, torches, 3 Supply, 20 silver.</p>
+        <div class="fields" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+          <div class="f"><label>Armor <button class="q">?</button></label><div class="in sel">None</div></div>
+          <div class="f"><label>Shield <button class="q">?</button></label><div class="in sel">No</div></div>
+          <div class="f"><label>Silver <button class="q">?</button></label><div class="in">20</div></div>
+          <div class="f"><label>Supply <button class="q">?</button></label><div class="in sel">d8</div></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="stack">
+      <section class="panel" aria-label="Talents">
+        <h2>Signature &amp; talents <button class="q" aria-label="Help: Talents">?</button></h2>
+        <p class="budget">Signature: <b style="color:var(--text)">Arcane Casting</b> · Pick <b>2 of 2</b> Hexer talents at level 1</p>
+        <label class="pick"><input type="checkbox" checked> Ember Shield <span class="cost">Reaction · 1 Ember</span></label>
+        <label class="pick"><input type="checkbox" checked> Familiar</label>
+        <label class="pick"><input type="checkbox"> Overchannel</label>
+        <label class="pick"><input type="checkbox"> Twinned <span class="cost">+1 Ember</span></label>
+        <label class="pick"><input type="checkbox"> Quiet Casting</label>
+        <label class="pick"><input type="checkbox"> Ward-sense</label>
+      </section>
+
+      <section class="panel" aria-label="Spells">
+        <h2>Spells <button class="q" aria-label="Help: Spells">?</button></h2>
+        <p class="budget">Hexer starts with <b>3 of 3</b> Arcane spells · cast with d20 + Lore + Spellcraft</p>
+        <label class="pick"><input type="checkbox" checked> Ember Bolt <span class="cost">0 Ember</span></label>
+        <label class="pick"><input type="checkbox" checked> Shatter <span class="cost">1 Ember</span></label>
+        <label class="pick"><input type="checkbox" checked> Mindspike <span class="cost">1 Ember</span></label>
+        <label class="pick"><input type="checkbox"> Binding Glyph <span class="cost">1 Ember</span></label>
+        <label class="pick"><input type="checkbox"> Forge Lance <span class="cost">3 Ember</span></label>
+      </section>
+
+      <section class="panel" aria-label="Contacts and notes">
+        <h2>Contacts &amp; notes <button class="q" aria-label="Help: Contacts">?</button></h2>
+        <div class="in">A rival academic (from Hedge scholar)</div>
+      </section>
+    </div>
+  </div>
+
+  <p class="note">VTTER-47 edit-mode mockup · sample data · help text tailored to the chosen Ancestry and Calling, from rules v0.2</p>
+</main>
+</body>
+</html>

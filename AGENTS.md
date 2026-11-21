@@ -74,3 +74,19 @@ by `.github/workflows/app.yml` on pushes to `main`. See [docs/adr/0001-companion
 - **Game numbers come from `/data/*.json`, never hard-coded.** When a rule's numbers change,
   update `rules/*.md` **and** `/data` in the same change (this is part of the ripple check above).
 - Vite `base` is `/virtual-table-top-ember-reach/`. Use relative or base-aware paths for assets.
+
+## API (`/api`)
+
+Cloudflare Worker at https://emberreach-api.emberreach-api.workers.dev, connecting through Hyperdrive to the
+Optilogic Postgres (schema `emberreach`). Deployed by `.github/workflows/api.yml` on pushes to `main`.
+
+- Commands (run in `api/`): `npm test`, `npm run typecheck`, `npm run dev` (local Worker on the real DB),
+  `npm run db:check`, `npm run db:migrate`, `npm run db:allow-cloudflare`, `npm run hyperdrive [-- --update]`,
+  `npm run secrets`, `npm run deploy`. **Run test and typecheck before you commit API changes.**
+- Secrets live in the repo-root `.env` (git-ignored) and in Cloudflare (`OPTILOGIC_APP_KEY` Worker secret).
+  **Never print, log or commit them.** Scripts read `.env` and pass values without echoing them, and call
+  wrangler without a shell, because cmd.exe rewrites `^ & | < > %` in passwords.
+- Schema changes are new files in `api/migrations/` (never edit an applied one). Sheet fields are real columns
+  and child tables, not JSON. Allowed values come from `/data/character.json` and `/data/core.json`.
+- The Optilogic test environment can restart and drop its firewall rules. The scripts and the Worker
+  (on failure, plus a 10-minute cron) re-add them automatically with the app key.
