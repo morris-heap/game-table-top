@@ -1,4 +1,4 @@
-# Emberreach — GM Guide (v0.1)
+# Emberreach — GM Guide (v0.2)
 
 ## 1. The GM's job
 
@@ -25,7 +25,8 @@ NAME  (Tier: Minion / Standard / Elite / Boss)
 Defense  X   (heroes roll to hit vs this)
 Grit     X   (Minions: drop on any hit)
 Attack DC X  (heroes dodge vs this) — Damage X
-Will DC  X   (only if it has mental attacks)
+Will DC  X   (only if it has mental attacks; heroes roll Will vs this)
+Resolve  X   (spells that target Resolve roll vs this; if not listed, use Defense)
 Moves    X zones
 Traits   passive abilities
 Dread    abilities that cost the GM's Dread
@@ -75,7 +76,7 @@ Defense 12 · Grit 10 · Attack DC 12, 5 damage · Moves 3
 **Smoke Wraith** (Standard, undead)
 Defense 13 · Grit 12 · Attack DC 13, 5 cold damage · Will DC 12 · Moves 2, flies
 *Traits:* takes half damage from non-magic weapons.
-*Dread (1):* **Dread Wail.** Every hero in Near range rolls Spirit vs Will DC 12 or becomes Frightened.
+*Dread (1):* **Dread Wail.** Every hero in Near range rolls Will vs Will DC 12 or becomes Frightened.
 
 **Bandit Captain** (Elite)
 Defense 14 · Grit 30 · Attack DC 13, 7 damage ×2 · Moves 2
