@@ -56,6 +56,11 @@ export function momentumFor(degree: Degree): number {
   return degree === 'triumph' || degree === 'strong' ? 1 : 0
 }
 
+/** Party Momentum after a scene ends (rules §6.7, v0.2: the pool empties to 0). */
+export function endScene(momentum: number): number {
+  return core.momentum.resetsAtSceneEnd ? 0 : Math.max(0, momentum - 1)
+}
+
 export function rollTest(input: TestInput, rng: Rng = Math.random): TestResult {
   const natural = roll(20, rng)
   const signed = netModifierDie(input.boons, input.banes)

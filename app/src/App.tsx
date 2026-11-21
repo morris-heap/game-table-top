@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import core from '../../data/core.json'
-import { DEGREE_HINT, DEGREE_LABEL, MAX_STEPS, netModifierDie, rollTest, type TestResult } from './engine/dice'
+import { DEGREE_HINT, DEGREE_LABEL, endScene, MAX_STEPS, netModifierDie, rollTest, type TestResult } from './engine/dice'
 
 const MOMENTUM_MAX = core.momentum.max
 
@@ -95,7 +95,7 @@ export default function App() {
         <div className="momentum-actions">
           <button type="button" onClick={() => setMomentum(m => Math.min(MOMENTUM_MAX, m + 1))}>+1</button>
           <button type="button" onClick={() => setMomentum(m => Math.max(0, m - 1))}>−1</button>
-          <button type="button" onClick={() => setMomentum(m => Math.max(0, m - 1))} title="Momentum drops by 1 at the end of each scene">End scene</button>
+          <button type="button" onClick={() => setMomentum(endScene)} title="Momentum empties at the end of each scene">End scene</button>
         </div>
         <ul className="costs">
           {core.momentum.costs.map(c => (

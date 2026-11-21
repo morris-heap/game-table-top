@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { degreeOf, momentumFor, netModifierDie, roll, rollTest, type Rng } from './dice'
+import { degreeOf, endScene, momentumFor, netModifierDie, roll, rollTest, type Rng } from './dice'
 
 /** RNG that makes roll(sides) return the given faces in order. */
 function faces(...values: Array<[face: number, sides: number]>): Rng {
@@ -77,5 +77,13 @@ describe('rollTest', () => {
     expect(r.modDie).toEqual({ sides: 4, roll: 3, sign: -1 })
     expect(r.total).toBe(11)
     expect(r.degree).toBe('cost')
+  })
+})
+
+describe('endScene (rules §6.7, v0.2)', () => {
+  it('empties the Momentum pool to 0', () => {
+    expect(endScene(6)).toBe(0)
+    expect(endScene(3)).toBe(0)
+    expect(endScene(0)).toBe(0)
   })
 })

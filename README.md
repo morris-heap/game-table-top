@@ -35,8 +35,10 @@ who can carry light into the dark and bring treasure back.
 | [rules/gm-guide.md](rules/gm-guide.md) | Running the game: foes, encounter building, a starter adventure |
 | [sheets/character-sheet.md](sheets/character-sheet.md) | Printable/fillable character sheet template |
 | [app/](app/) | Online companion app, live at https://morris-heap.github.io/virtual-table-top-ember-reach/ |
-| [data/](data/) | Game numbers as JSON, shared by the app and checked against the rules |
+| [api/](api/) | Companion API (Cloudflare Worker + Optilogic Postgres) for saved characters, live at https://emberreach-api.emberreach-api.workers.dev |
+| [data/](data/) | Game numbers as JSON, shared by the app and API and checked against the rules |
 | [docs/adr/](docs/adr/) | Architecture decision records |
+| [docs/mockups/](docs/mockups/) | UI mockups (character sheet) |
 
 ## Roadmap
 
@@ -44,8 +46,9 @@ who can carry light into the dark and bring treasure back.
 - **v0.2:** settle the v0.1 open questions (done), first playtest, then rebalance the numbers (Grit, damage, Difficulty bands).
 - **Before any public release:** run a formal trademark search on the name "Emberreach".
 - **v0.3:** levels 6–10 talents, more spells, magic items, a second adventure.
-- **Later (optional):** a digital companion (dice roller, character builder,
-  initiative/Momentum tracker), print layout, art direction.
+- **Digital companion (in progress):** the Test roller and Momentum tracker are live. The API for saved
+  characters is live. Next: the character sheet with guided creation (VTTER-47), then login (VTTER-53).
+- **Later:** initiative tracker, a shared table, print layout, art direction.
 
 ## Working with AI agents
 
